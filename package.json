@@ -1,0 +1,24 @@
+{
+  "name": "clanim",
+  "version": "0.1.0",
+  "description": "Classeur ultra light animation library",
+  "main": "clanim.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/classeur/clanim.git"
+  },
+  "author": "Benoit Schweblin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/classeur/clanim/issues"
+  },
+  "homepage": "https://github.com/classeur/clanim#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-uglify": "^1.2.0"
+  }
+}
