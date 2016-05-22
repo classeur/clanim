@@ -5,6 +5,33 @@
     window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame']
   }
 
+  var transformStyles = [
+    'WebkitTransform',
+    'MozTransform',
+    'msTransform',
+    'OTransform',
+    'transform'
+  ]
+  var transitionEndEvents = {
+    WebkitTransition: 'webkitTransitionEnd',
+    MozTransition: 'transitionend',
+    msTransition: 'MSTransitionEnd',
+    OTransition: 'oTransitionEnd',
+    transition: 'transitionend'
+  }
+  var transformStyle = getStyle(transformStyles)
+  var transitionStyle = getStyle(Object.keys(transitionEndEvents))
+  var transitionEndEvent = transitionEndEvents[transitionStyle]
+
+  function getStyle (styles) {
+    var elt = document.createElement('div')
+    return styles.reduce(function (result, style) {
+      return elt.style[style] !== undefined
+        ? style
+        : result
+    }, undefined)
+  }
+
   function identity (x) {
     return x
   }
@@ -126,11 +153,13 @@
     var animation = this
     var elt = this.elt
 
-    function endCbOnce () {
-      elt.removeEventListener('transitionend', endCbOnce)
-      var endCb = animation.$end.endCb
-      animation.$end.endCb = undefined
-      endCb && endCb()
+    function onTransitionEnd (evt) {
+      if (evt.target === elt) {
+        elt.removeEventListener(transitionEndEvent, onTransitionEnd)
+        var endCb = animation.$end.endCb
+        animation.$end.endCb = undefined
+        endCb && endCb()
+      }
     }
 
     var progress = (Date.now() - animation.$startTime) / animation.$end.duration
@@ -145,7 +174,7 @@
       animation.$end.delay && transitions.push(animation.$end.delay + 'ms')
       transition = transitions.join(' ')
       if (animation.$end.endCb) {
-        elt.addEventListener('transitionend', endCbOnce)
+        elt.addEventListener(transitionEndEvent, onTransitionEnd)
       }
     } else if (progress < 1) {
       animation.$requestId = window.requestAnimationFrame(animationLoop.bind(animation, false))
@@ -173,12 +202,8 @@
 
     transforms.length && transforms.push('translateZ(0)') // activate GPU
     var transform = transforms.join(' ')
-    elt.style.WebkitTransform = transform
-    elt.style.MozTransform = transform
-    elt.style.transform = transform
-    elt.style.WebkitTransition = transition
-    elt.style.MozTransition = transition
-    elt.style.transition = transition
+    elt.style[transformStyle] = transform
+    elt.style[transitionStyle] = transition
     animation.$end.stepCb && animation.$end.stepCb()
   }
 
