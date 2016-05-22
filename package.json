@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/classeur/clanim#readme",
   "devDependencies": {
+    "clgulp": "^1.1.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-uglify": "^1.2.0"
